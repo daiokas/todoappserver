@@ -7,7 +7,8 @@ const PORT = 4000;
 
 const connectOption = {
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
 }
 
 app.use(cors())
@@ -45,9 +46,25 @@ app.get('/delete', async (req, res) => {
 
 })
 
-app.get('/complete', async (req, res) => {
+app.post('/complete', async (req, res) => {
     const {id} = req.query
-    const result = await Todo.findByIdAndUpdate(id, {completed: true}).catch((error) => ({ error }))
+    const {completed} = req.body
+    const result = await Todo.findByIdAndUpdate(id, {completed: completed}).catch((error) => ({ error }))
+    res.json(result)
+})
+
+app.get('/deleteall', async (req, res) => {
+    const result = await Todo.deleteMany({completed: true}).catch((error) => ({ error }))
+    res.json(result)
+})
+
+app.get('/completeall', async (req, res) => {
+    const result = await Todo.updateMany({completed: true}).catch((error) => ({ error }))
+    res.json(result)
+})
+
+app.get('/showActive', async (req, res) => {
+    const result = await Todo.find({completed: false}).exec().catch((error) => ({ error }))
     res.json(result)
 })
 
