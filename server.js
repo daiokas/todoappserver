@@ -38,6 +38,19 @@ app.post('/post', async (req, res) => {
     res.json(result);
 })
 
+app.get('/delete', async (req, res) => {
+    const {id} = req.query
+    const result = await Todo.findByIdAndDelete(id).catch((error) => ({ error }))
+    res.json(result)
+
+})
+
+app.get('/complete', async (req, res) => {
+    const {id} = req.query
+    const result = await Todo.findByIdAndUpdate(id, {completed: true}).catch((error) => ({ error }))
+    res.json(result)
+})
+
 
 app.listen(PORT, (err) => {
     if (err) throw err
