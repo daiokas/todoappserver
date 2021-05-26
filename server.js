@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-// const bodyParser = require
+const bodyParser = require("body-parser")
 const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = 4000;
@@ -9,6 +9,9 @@ const connectOption = {
     useUnifiedTopology: true,
     useNewUrlParser: true
 }
+
+app.use(cors())
+app.use(bodyParser.json())
 
 mongoose.connect('mongodb+srv://dai:moaicon135@cluster0.rcrau.mongodb.net/todos?retryWrites=true&w=majority', connectOption);
 
@@ -26,13 +29,15 @@ app.get('/get', async(req, res) => {
     res.json(todos);
 })
 
-app.post('/post', async(req, res) => {
+app.post('/post', async (req, res) => {
     const todos = new Todo({
         text: req.body.text,
-        // completed: req.
+        completed: req.body.completed
     })
-    return app.render(req, res, '/post', req.query)
+    const result = await todos.save().catch((error) => ({ error }))
+    res.json(result);
 })
+
 
 app.listen(PORT, (err) => {
     if (err) throw err
